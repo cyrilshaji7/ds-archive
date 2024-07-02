@@ -35,7 +35,7 @@ class UserLogin:
 
 # JWT token helper function
 def create_access_token(identity):
-    expires = timedelta(minutes=30)
+    expires = timedelta(minutes=100)
     return jwt_create_access_token(identity=identity, expires_delta=expires)
 
 # Endpoint for user registration

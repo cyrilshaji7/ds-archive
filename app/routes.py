@@ -58,12 +58,13 @@ def login():
 @jwt_required()
 def create_blog_post():
     current_user = get_jwt_identity()
+    
     data = request.get_json()
     title = data.get("title")
     content = data.get("content")
-
+    print(title, content, current_user)
     new_post = BlogPost(title=title, content=content, author=current_user)
-    db.add_blog_post(new_post)
+    db.add_blog_post(title=title, content=content, author=current_user)
     return jsonify({"message": "Blog post created successfully"}), 201
 
 # Endpoint for retrieving all blog posts (no authentication required)
@@ -89,5 +90,5 @@ def add_comment(post_id):
     content = data.get("content")
 
     new_comment = Comment(id=len(db.get_comments_for_post(post_id)) + 1, content=content, author=current_user)
-    db.add_comment(post_id, new_comment)
+    db.add_comment(post_id, new_comment, author=current_user)
     return jsonify({"message": "Comment added successfully"}), 201
