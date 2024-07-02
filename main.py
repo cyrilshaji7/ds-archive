@@ -5,7 +5,17 @@ from datetime import timedelta, datetime
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "your-secret-key"  # Change this in production
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 jwt = JWTManager(app)
+
+# Function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'mov'}  # Allowed file extensions
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Sample user database (replace with database integration)
 fake_users_db = {

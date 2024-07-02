@@ -19,21 +19,21 @@ Content-Type: application/json
 ### Create a blog post (replace <TOKEN> with the JWT token)
 POST http://127.0.0.1:5000/api/posts/create
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTk1NDM4MSwianRpIjoiMDQ2NTYwNDAtNTI2Yi00OTE3LWExY2QtNTk3NjkyYjIwMmFkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MTk5NTQzODEsImNzcmYiOiJhYzRhZDllMy1kNTIzLTQ1MzgtYTYzOC0zODQxNzI1ZjY1MGEiLCJleHAiOjE3MTk5NTUyODF9.vPZ5DcJ31NZtZAGtJe3571TrAvHgzQNoqRfUH-YSSns
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTk1NzMxNiwianRpIjoiYzk3MzIxZWQtOWEwYS00NzA0LWExYTItNjFlNzQzMTdlZGJmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MTk5NTczMTYsImNzcmYiOiJiOWJkZGFmZS1kNDM0LTQ0NjMtOGU5YS1kNjMxYWFkOTg5YzIiLCJleHAiOjE3MTk5NTgyMTZ9.a2Fd8A6z7RXzHM-sBP1gUw3Yr0jE4ANTg4-ig7u073A
 
 {
-  "title": "My First Blog Post",
+  "title": "My second Blog Post",
   "content": "This is the content of my first blog post."
 }
 
 ### Add a comment to a blog post (replace <TOKEN> with the JWT token and <POST_ID> with the post ID)
-POST http://127.0.0.1:5000/api/posts/1/comments/create
+POST http://127.0.0.1:5000/api/posts/2/comments/create
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTk1NTQyMSwianRpIjoiMThlOTdmOTMtZjM3NC00YzRlLWI0MDMtZWU3NzgyMWFmMjc1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MTk5NTU0MjEsImNzcmYiOiIyNWUyZjU5NS04ODg5LTQxNzgtYTRhZC1hNjcwMTFmN2ExZTQiLCJleHAiOjE3MTk5NTYzMjF9.8f5gdjx3aL7rqr13f78KBf8aBg3gfb1nIM8USdjgLvE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxOTk1NzMxNiwianRpIjoiYzk3MzIxZWQtOWEwYS00NzA0LWExYTItNjFlNzQzMTdlZGJmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MTk5NTczMTYsImNzcmYiOiJiOWJkZGFmZS1kNDM0LTQ0NjMtOGU5YS1kNjMxYWFkOTg5YzIiLCJleHAiOjE3MTk5NTgyMTZ9.a2Fd8A6z7RXzHM-sBP1gUw3Yr0jE4ANTg4-ig7u073A
 
 {
   "content": "This is a comment."
 }
 
 ### Get comments of a blog post (replace <POST_ID> with the post ID)
-GET http://127.0.0.1:5000/api/posts/<POST_ID>/comments
+GET http://127.0.0.1:5000/api/posts/1/comments
