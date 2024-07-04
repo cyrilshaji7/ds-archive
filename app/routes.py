@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, make_response
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
@@ -12,6 +12,7 @@ db = Database()
 jwt = JWTManager()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 @jwt.user_identity_loader
 def user_identity_lookup(user):
     return user['email']
@@ -24,9 +25,7 @@ def user_lookup_callback(_jwt_header, jwt_data):
 # Endpoint to render index.html
 @api.route("/", methods=["GET"])
 def index():
-    
     current_user = None
-    
     try:
         access = decode_token(request.cookies['access_token'])
         current_user = access['sub']
@@ -36,7 +35,6 @@ def index():
     posts = db.get_all_blog_posts()
     return render_template("index.html", posts=posts, user=current_user)
 
-
 # Endpoint to render login.html
 @api.route("/login", methods=["GET", "POST"])
 def login():
@@ -44,9 +42,7 @@ def login():
         data = request.form
         email = data.get("email")
         password = data.get("password")
-
         user = db.get_user(email=email)
-
         if not user:
             return jsonify({"message": "User not found"}), 404
 
@@ -54,12 +50,18 @@ def login():
             return jsonify({"message": "Invalid credentials"}), 401
 
         access_token = create_access_token(identity=email)
+        print(access_token)
         response = redirect(url_for('api.index'))
         response.set_cookie('access_token', access_token, httponly=True)
         return response
 
     return render_template("login.html")
 
+@api.route("/logout", methods=['POST', 'GET'])
+def logout():
+    response = make_response(redirect(url_for('api.index')))
+    response.set_cookie('access_token', '', expires=0)
+    return response
 
 # Endpoint to render register.html
 @api.route("/register", methods=["GET", "POST"])
@@ -83,17 +85,31 @@ def get_blog_posts():
     return render_template("blog.html", posts=posts)
 
 # Endpoint to handle creating blog posts
-@api.route("/posts/create", methods=["POST"])
+@api.route("/posts/create", methods=["GET"])
 @jwt_required()
 def create_blog_post():
+    print("asdfsdfsdfsdf")
     current_user = get_jwt_identity()
     
-    data = request.form
-    title = data.get("title")
-    content = data.get("content")
-    
-    db.add_blog_post(title=title, content=content, author=current_user)
-    return redirect(url_for('api.get_blog_posts'))
+    if request.method == 'GET':
+        return render_template('create_post.html', user=current_user)
+    current_user = get_jwt_identity()
+    print(current_user)
+    # print(f"The token is {current_user}")
+    # if request.method == "POST":
+    #     token = request.cookies.get('access_token')
+    #     print(token)
+    #     if not token:
+    #         return jsonify({"message": "Missing access token"}), 401
+
+    #     current_user = get_jwt_identity()
+    #     data = request.form
+    #     title = data.get("title")
+    #     content = data.get("content")
+    #     db.add_blog_post(title=title, content=content, author=current_user)
+    #     return redirect(url_for('api.get_blog_posts'))
+    return jsonify(logged_in_as=current_user), 200
+    #return render_template("create_post.html")
 
 # Endpoint to handle retrieving comments for a blog post
 @api.route("/posts/<int:post_id>/comments", methods=["GET"])
@@ -114,3 +130,10 @@ def add_comment(post_id):
     new_comment = Comment(id=len(db.get_comments_for_post(post_id)) + 1, content=content, author=current_user)
     db.add_comment(post_id=post_id, content=content, author=current_user)
     return jsonify({"message": "Comment added successfully"}), 201
+
+
+@api.get('/test')
+@jwt_required(refresh=True)
+def testing():
+    users = get_jwt_identity()
+    return jsonify({"user data:": users})
