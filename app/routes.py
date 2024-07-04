@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from app.models import User, BlogPost, Comment
@@ -24,7 +24,18 @@ def user_lookup_callback(_jwt_header, jwt_data):
 # Endpoint to render index.html
 @api.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    
+    current_user = None
+    
+    try:
+        access = decode_token(request.cookies['access_token'])
+        current_user = access['sub']
+    except Exception as e:
+        print(f"Error getting user identity: {e}")
+    print(current_user)
+    posts = db.get_all_blog_posts()
+    return render_template("index.html", posts=posts, user=current_user)
+
 
 # Endpoint to render login.html
 @api.route("/login", methods=["GET", "POST"])
@@ -43,8 +54,12 @@ def login():
             return jsonify({"message": "Invalid credentials"}), 401
 
         access_token = create_access_token(identity=email)
-        return redirect(url_for('api.index'))  # Redirect to index after successful login
+        response = redirect(url_for('api.index'))
+        response.set_cookie('access_token', access_token, httponly=True)
+        return response
+
     return render_template("login.html")
+
 
 # Endpoint to render register.html
 @api.route("/register", methods=["GET", "POST"])

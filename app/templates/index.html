@@ -2,14 +2,89 @@
 <html>
 <head>
     <title>ds-archive.us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #343a40;
+            color: white;
+        }
+        .header h1 {
+            font-size: 40px;
+            margin: 0;
+        }
+        .nav-links {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .nav-links li {
+            display: inline;
+            margin-left: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+        .content {
+            padding: 20px;
+        }
+        .blog-post {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .blog-post h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .blog-post p {
+            color: #666;
+        }
+        .blog-post small {
+            display: block;
+            margin-top: 10px;
+            color: #999;
+        }
+    </style>
 </head>
 <body>
-    <h1 style="font-size: 70px;">ds-archive.us</h1>
-    <ul>
-        <li><a href="{{ url_for('api.login') }}">Login</a></li>
-        <li><a href="{{ url_for('api.register') }}">Register</a></li>
-        <li><a href="{{ url_for('api.get_blog_posts') }}">View Blog Posts</a></li>
-        <li><a href="{{ url_for('api.create_blog_post') }}">Create Blog Post</a></li>
-    </ul>
+    <div class="header">
+        <h1>ds-archive.us</h1>
+        <ul class="nav-links">
+            {% if user %}
+                <li>Welcome, {{ user }}</li>
+                
+            {% else %}
+                <li><a href="{{ url_for('api.login') }}">Login</a></li>
+                <li><a href="{{ url_for('api.register') }}">Register</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Blog Posts</h2>
+        {% for post in posts %}
+        <div class="blog-post">
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <small>by {{ post.author }} on {{ post.created_at }}</small>
+        </div>
+        {% endfor %}
+    </div>
 </body>
 </html>

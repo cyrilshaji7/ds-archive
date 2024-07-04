@@ -15,7 +15,7 @@ class BlogPost:
         self.content = content
         self.author = author
         self.created_at = created_at or datetime.now()
-
+        
 class Comment:
     def __init__(self, id, content, author, created_at=None):
         self.id = id

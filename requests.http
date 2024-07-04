@@ -12,8 +12,8 @@ POST http://127.0.0.1:5000/api/login
 Content-Type: application/json
 
 {
-  "email": "sudo@example.com",
-  "password": "sudo"
+  "email": "wtf@gmail.com",
+  "password": "wtf"
 }
 
 ### Create a blog post (replace <TOKEN> with the JWT token)
