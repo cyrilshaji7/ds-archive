@@ -13,7 +13,8 @@
             <ul class="flex items-center space-x-6">
                 <li class="text-lg">Welcome, {{ user }}</li>
                 <li>
-                    <form action="{{ url_for('api.logout') }}" method="POST">
+                    <form action="{{ url_for('api.index') }}" method="POST">
+
                         <button type="submit" class="text-blue-400 hover:underline">Logout</button>
                     </form>
                 </li>

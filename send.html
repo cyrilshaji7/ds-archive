@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected GET Request</title>
+</head>
+<body>
+    <h1>Protected GET Request Example</h1>
+    <button id="fetchDataBtn">Fetch Protected Data</button>
+    <div id="responseContainer"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fetchDataBtn = document.getElementById("fetchDataBtn");
+            const responseContainer = document.getElementById("responseContainer");
+            const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMDIxNTI3MywianRpIjoiZDk5ZmI3MTgtOTRhNC00NGU0LTk1NzktNDRhMmI4ODkyOTVmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MjAyMTUyNzMsImNzcmYiOiJiNmQ0Y2NjMC04ZjhmLTQ2OWUtYmIwNi1jNGZkMWQzOWFiMjciLCJleHAiOjE3MjAyMTYxNzN9.n7MRadCUUKxbalA-KaHSmuKaNslbQmHw6q6nUaBbTHM";  // Replace with your actual token
+
+            fetchDataBtn.addEventListener("click", function() {
+                const url = 'http://127.0.0.1:5000/api/posts/create';
+
+                const headers = new Headers();
+                headers.append('Authorization', 'Bearer ' + token);
+
+                const requestOptions = {
+                    method: 'GET',
+                    headers: headers,
+                    mode: 'cors',  // Ensure CORS mode is set
+                    cache: 'no-cache',  // Disable caching
+                    redirect: 'follow'
+                };
+
+                fetch(url, requestOptions)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();  // Adjust based on your response format
+                        } else {
+                            throw new Error('Fetch request failed');
+                        }
+                    })
+                    .then(data => {
+                        console.log('Response:', data);  // Print response data
+                        // Display the response data on the screen
+                        responseContainer.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);  // Log any errors
+                        responseContainer.innerHTML = `<p>Error: ${error.message}</p>`;
+                    });
+            });
+        });
+    </script>
+</body>
+</html>
