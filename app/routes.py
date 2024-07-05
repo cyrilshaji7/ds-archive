@@ -26,18 +26,22 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @api.route("/", methods=["GET"])
 def index():
     current_user = None
+    access = None
     try:
-        access = decode_token(request.cookies['access_token'])
-        current_user = access['sub']
+        access = request.cookies['access_token']
+        print(access)
+        decoded = decode_token(access)
+        current_user = decoded['sub']
     except Exception as e:
         print(f"Error getting user identity: {e}")
     print(current_user)
     posts = db.get_all_blog_posts()
-    return render_template("index.html", posts=posts, user=current_user)
+    return render_template("index.html", posts=posts, user=current_user, access_token=access)
 
 # Endpoint to render login.html
 @api.route("/login", methods=["GET", "POST"])
 def login():
+    access_token = None
     if request.method == "POST":
         data = request.form
         email = data.get("email")
@@ -52,7 +56,7 @@ def login():
         access_token = create_access_token(identity=email)
         print(access_token)
         response = redirect(url_for('api.index'))
-        response.set_cookie('access_token', access_token, httponly=True)
+        response.set_cookie('access_token', access_token, httponly=False)  # httponly wasted 4 hours of my life >:(
         return response
 
     return render_template("login.html")
@@ -85,31 +89,34 @@ def get_blog_posts():
     return render_template("blog.html", posts=posts)
 
 # Endpoint to handle creating blog posts
-@api.route("/posts/create", methods=["GET"])
+@api.route("/posts/create", methods=["GET", "POST"])
 @jwt_required()
 def create_blog_post():
     print("asdfsdfsdfsdf")
     current_user = get_jwt_identity()
     
+    print(current_user)
     if request.method == 'GET':
         return render_template('create_post.html', user=current_user)
-    current_user = get_jwt_identity()
-    print(current_user)
-    # print(f"The token is {current_user}")
-    # if request.method == "POST":
-    #     token = request.cookies.get('access_token')
-    #     print(token)
-    #     if not token:
-    #         return jsonify({"message": "Missing access token"}), 401
+    
+    print(f"The token is {current_user}")
+    if request.method == "POST":
+        # token = request.cookies['access_token']
+        # print(token)
+        # if not token:
+        #     return jsonify({"message": "Missing access token"}), 401
 
-    #     current_user = get_jwt_identity()
-    #     data = request.form
-    #     title = data.get("title")
-    #     content = data.get("content")
-    #     db.add_blog_post(title=title, content=content, author=current_user)
-    #     return redirect(url_for('api.get_blog_posts'))
-    return jsonify(logged_in_as=current_user), 200
-    #return render_template("create_post.html")
+        current_user = get_jwt_identity()
+        data = request.form
+        print(data)
+        # title = data.get("title")
+        # content = data.get("content")
+        title = "dasfdf"
+        content = "Fsdfsdfsdf"
+        db.add_blog_post(title=title, content=content, author=current_user)
+        return redirect(url_for('api.get_blog_posts'))
+    #return jsonify(logged_in_as=current_user), 200
+    return render_template("create_post.html")
 
 # Endpoint to handle retrieving comments for a blog post
 @api.route("/posts/<int:post_id>/comments", methods=["GET"])
@@ -132,8 +139,8 @@ def add_comment(post_id):
     return jsonify({"message": "Comment added successfully"}), 201
 
 
-@api.get('/test')
-@jwt_required(refresh=True)
+@api.route('/test', methods=['GET', 'POST'])
+@jwt_required()
 def testing():
     users = get_jwt_identity()
     return jsonify({"user data:": users})

@@ -12,14 +12,16 @@ POST http://127.0.0.1:5000/api/login
 Content-Type: application/json
 
 {
-  "email": "wtf@gmail.com",
-  "password": "wtf"
+  "email": "sudo@example.com",
+  "password": "sudo"
 }
 
 ### Create a blog post (replace <TOKEN> with the JWT token)
-POST http://127.0.0.1:5000/api/posts/create
+GET  http://127.0.0.1:5000/api/posts/create
 Content-Type: application/json
-Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMDEyOTM3OCwianRpIjoiMDdkZGY2MTYtZmZhZi00MmNjLTlkYTctNjg3ZTEzOTMyNWY2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MjAxMjkzNzgsImNzcmYiOiJlNjE0Y2NjOS0xOGI2LTQ0MmEtOGIyNi01NjgzMTFiMzExM2EiLCJleHAiOjE3MjAxMzAyNzh9.TxZWQIVYdIE_XmFemNbutzF6qne4ApquMv3xSgDkYSk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMDIwNjQ5MywianRpIjoiNzk4YWUyNTItYjI4NC00OTk3LTg1NzYtNjI0Mzk4OTk2MTFmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MjAyMDY0OTMsImNzcmYiOiI4ZWZmNWMyNC03YTY5LTQxODYtYjA0ZC1lMWM4N2RjNGU2NTYiLCJleHAiOjE3MjAyMDczOTN9.Kmurf-TsjyTy0gnkoMLlzBlPRv3vtnxb05evPytj3XU
+
+
 
 {
   "title": "My second Blog Post",
@@ -36,4 +38,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsI
 }
 
 ### Get comments of a blog post (replace <POST_ID> with the post ID)
-GET http://127.0.0.1:5000/api/posts/1/comments
+GET http://127.0.0.1:5000/api/test
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMDIwNjQ5MywianRpIjoiNzk4YWUyNTItYjI4NC00OTk3LTg1NzYtNjI0Mzk4OTk2MTFmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6InN1ZG9AZXhhbXBsZS5jb20iLCJuYmYiOjE3MjAyMDY0OTMsImNzcmYiOiI4ZWZmNWMyNC03YTY5LTQxODYtYjA0ZC1lMWM4N2RjNGU2NTYiLCJleHAiOjE3MjAyMDczOTN9.Kmurf-TsjyTy0gnkoMLlzBlPRv3vtnxb05evPytj3XU

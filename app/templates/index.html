@@ -5,6 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ds-archive.us</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+    const newPostLink = document.getElementById("newPostLink");
+    const token = '{{ access_token | safe }}';  // Access token passed via Jinja
+        console.log(token)
+    const url = 'http://127.0.0.1:5000/api/posts/create';
+                const headers = {
+                    'Authorization': 'Bearer ' + token
+                };
+
+                console.log('Fetch URL:', url);
+                console.log('Fetch Headers:', headers);
+    
+                
+    if (newPostLink) {
+        newPostLink.addEventListener("click", function(event) {
+            event.preventDefault();
+            if (token) {
+                const url = 'http://127.0.0.1:5000/api/posts/create';
+                const headers = {
+                    'Authorization': 'Bearer ' + token
+                };
+
+                console.log('Fetch URL:', url);
+                console.log('Fetch Headers:', headers);
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: headers
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '{{ url_for("api.create_blog_post") }}';
+                    } else {
+                        alert('Authorization failed. Please log in again.');
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert('No access token found. Please log in again.');
+            }
+        });
+    }
+});
+
+    </script>
 </head>
 <body class="bg-gray-100 font-sans">
     <header class="bg-gray-800 text-white py-4">
@@ -27,9 +73,10 @@
     </header>
     <div class="container mx-auto mt-8">
         <h2 class="text-3xl font-bold mb-6">Blog Posts</h2>
+        <h2>{{access_token}}</h2>
         {% if user %}
             <div class="mb-6">
-                <a href="{{ url_for('api.create_blog_post') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">New Post</a>
+                <a href="{{ url_for('api.create_blog_post') }}" id="newPostLink" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">New Post</a>
             </div>
         {% endif %}
         {% for post in posts %}
@@ -41,5 +88,4 @@
         {% endfor %}
     </div>
 </body>
-
 </html>
