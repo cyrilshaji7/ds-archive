@@ -103,4 +103,3 @@ def add_comment(post_id):
 def testing():
     current_user = session.get('user_email')
     return jsonify({"user data:": current_user})
-
