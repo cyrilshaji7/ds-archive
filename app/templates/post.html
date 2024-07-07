@@ -44,7 +44,16 @@
             <div class="text-lg mb-8">
                 {{ post.content }}
             </div>
-            
+
+            <!-- Edit and Delete Post Buttons -->
+            {% if user == post.author %}
+                <div class="flex gap-4 mb-8">
+                    <a href="{{ url_for('api.edit_post', post_id=post.id) }}" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Edit</a>
+                    <form action="{{ url_for('api.delete_post', post_id=post.id) }}" method="POST">
+                        <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Delete</button>
+                    </form>
+                </div>
+            {% endif %}
             
             <!-- Add Comment Form -->
             {% if user %}
@@ -52,7 +61,7 @@
                     <h2 class="text-2xl font-bold mb-4">Add a Comment</h2>
                     <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
                         <div class="mb-4">
-                            <label for="content" class="block text-gray-700">Comment</label>
+                            <label for="content" class="block text-gray-700"></label>
                             <textarea id="content" name="content" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                         </div>
                         <div>
@@ -70,6 +79,15 @@
                     <div class="bg-gray-100 p-4 rounded-lg mb-4">
                         <p class="text-gray-700">{{ comment.content }}</p>
                         <div class="text-gray-500 text-sm mt-2">by {{ comment.author }} on {{ comment.created_at.strftime('%B %d, %Y') }}</div>
+                        
+                        <!-- Edit and Delete Comment Buttons -->
+                        {% if user == comment.author %}
+                            <div class="flex gap-4 mt-2">
+                                <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="POST">
+                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">Delete</button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>

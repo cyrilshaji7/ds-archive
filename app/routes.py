@@ -104,8 +104,44 @@ def add_comment(post_id):
     db.add_comment(post_id=post_id, content=content, author=current_user)
     return redirect(url_for('api.get_post', post_id=post_id))
 
-# Test endpoint to check current session user
-@api.route('/test', methods=['GET', 'POST'])
-def testing():
+# New function to delete a post
+@api.route("/posts/<int:post_id>/delete", methods=["POST"])
+def delete_post(post_id):
     current_user = session.get('user_email')
-    return jsonify({"user data:": current_user})
+    post = db.get_post(post_id)
+    if post.author != current_user:
+        return jsonify({"message": "Unauthorized action"}), 403
+    db.delete_blog_post(post_id)
+    return redirect(url_for('api.index'))
+
+# New function to delete a comment
+@api.route("/posts/<int:post_id>/comments/<int:comment_id>/delete", methods=["POST"])
+def delete_comment(post_id, comment_id):
+    current_user = session.get('user_email')
+    comment = db.get_comment(post_id, comment_id)
+
+    if not comment or comment.author != current_user:
+        return jsonify({"message": "Unauthorized"}), 403
+
+    db.delete_comment(comment)
+    return redirect(url_for('api.get_post', post_id=post_id)) 
+
+# New function to edit a post
+@api.route("/posts/<int:post_id>/edit", methods=["GET", "POST"])
+def edit_post(post_id):
+    current_user = session.get('user_email')
+    post = db.get_post(post_id)
+    if post.author != current_user:
+        return jsonify({"message": "Unauthorized action"}), 403
+
+    if request.method == 'GET':
+        return render_template('edit_post.html', post=post, user=current_user)
+
+    if request.method == "POST":
+        data = request.form
+        title = data.get("title")
+        content = data.get("content")
+        db.update_blog_post(post_id, title=title, content=content)
+        return redirect(url_for('api.get_post', post_id=post_id))
+
+    return render_template("index.html")

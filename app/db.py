@@ -48,7 +48,6 @@ class Database:
 
     def add_user(self, email, username, password):
         hashed_password = pwd_context.hash(password)  # Hashing the password
-        print(hashed_password)
         user = User(email=email, username=username, password=hashed_password)
         self.session.add(user)
         self.session.commit()
@@ -65,12 +64,25 @@ class Database:
         return self.session.query(BlogPost).all()
     
     def get_post(self, post_id):
-        return self.session.query(BlogPost).filter(BlogPost.id==post_id).one_or_none()
+        return self.session.query(BlogPost).filter(BlogPost.id == post_id).one_or_none()
+
+    def update_blog_post(self, post_id, title, content):
+        post = self.get_post(post_id)
+        if post:
+            post.title = title
+            post.content = content
+            self.session.commit()
+            return post
+        return None
+
+    def delete_comment(self, comment):
+        self.session.delete(comment)
+        self.session.commit()
 
     def add_comment(self, post_id, content, author):
         comment = Comment(content=content, author=author, post_id=post_id)
         self.session.add(comment)
         self.session.commit()
 
-    def get_comments_for_post(self, post_id):
-        return self.session.query(Comment).filter_by(post_id=post_id).all()
+    def get_comment(self, post_id, comment_id):
+        return self.session.query(Comment).filter_by(id=comment_id, post_id=post_id).one_or_none()
