@@ -1,7 +1,5 @@
-from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session
-from datetime import timedelta
+from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, abort, flash
 from passlib.context import CryptContext
-from app.models import User, BlogPost, Comment
 from app.db import Database
 
 api = Blueprint('api', __name__, url_prefix='/api')  # Specify url_prefix='/api' for the Blueprint
@@ -99,10 +97,24 @@ def get_comments(post_id):
 @api.route("/posts/<int:post_id>/comments/create", methods=["POST"])
 def add_comment(post_id):
     current_user = session.get('user_email')
-    data = request.form
-    content = data.get("content")
-    db.add_comment(post_id=post_id, content=content, author=current_user)
-    return redirect(url_for('api.get_post', post_id=post_id))
+    if not current_user:
+        abort(403)  # Unauthorized if user is not logged in
+    
+    content = request.form.get("content")
+    parent_comment_id = request.form.get("parent_comment_id")
+    
+    try:
+        if parent_comment_id:
+            db.add_comment(post_id=post_id, content=content, author=current_user, parent_comment_id=parent_comment_id)
+        else:
+            db.add_comment(post_id=post_id, content=content, author=current_user)
+        
+        flash('Comment added successfully!', 'success')
+        return redirect(url_for('api.get_post', post_id=post_id))
+    except Exception as e:
+        flash(f'Failed to add comment: {str(e)}', 'error')
+        return redirect(url_for('api.get_post', post_id=post_id))
+
 
 # New function to delete a post
 @api.route("/posts/<int:post_id>/delete", methods=["POST"])

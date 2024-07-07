@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ post.title }}</title>
+    <title>{{ post.title }} - ds-archive.us</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .header {
@@ -72,26 +72,62 @@
             {% else %}
                 <p class="text-gray-600">You must <a href="{{ url_for('api.login') }}" class="text-blue-600 hover:underline">login</a> to add a comment.</p>
             {% endif %}
+            
             <!-- Comments Section -->
             <div class="mt-10">
                 <h2 class="text-2xl font-bold mb-4">Comments</h2>
-                {% for comment in post.comments %}
+                {% for comment in post.comments if not comment.parent_comment_id %}
                     <div class="bg-gray-100 p-4 rounded-lg mb-4">
                         <p class="text-gray-700">{{ comment.content }}</p>
-                        <div class="text-gray-500 text-sm mt-2">by {{ comment.author }} on {{ comment.created_at.strftime('%B %d, %Y') }}</div>
+                        <div class="text-gray-500 text-sm mt-2">by {{ comment.author.split('@')[0] }} on {{ comment.created_at.strftime('%B %d, %Y') }}</div>
                         
-                        <!-- Edit and Delete Comment Buttons -->
+                        <!-- Delete Comment Button -->
                         {% if user == comment.author %}
-                            <div class="flex gap-4 mt-2">
-                                <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="POST">
-                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">Delete</button>
+                            <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="POST">
+                                <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">Delete Comment</button>
+                            </form>
+                        {% endif %}
+                        
+                        <!-- Add Reply Form -->
+                        {% if user %}
+                            <div class="bg-gray-100 p-4 rounded-lg mt-2">
+                                <h3 class="text-lg font-bold mb-2">Reply to {{ comment.author.split('@')[0] }}</h3>
+                                <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
+                                    <div class="mb-4">
+                                        <label for="content" class="block text-gray-700"></label>
+                                        <textarea id="content" name="content" rows="3" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                                        <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Submit Reply</button>
+                                    </div>
                                 </form>
                             </div>
+                        {% endif %}
+                        
+                        <!-- Display Replies -->
+                        {% if comment.replies %}
+                            {% for reply in comment.replies %}
+                                <div class="bg-gray-200 p-4 rounded-lg ml-4 mt-2">
+                                    <p class="text-gray-700">{{ reply.content }}</p>
+                                    <div class="text-gray-500 text-sm mt-2">by {{ reply.author.split('@')[0] }} on {{ reply.created_at.strftime('%B %d, %Y') }}</div>
+                                    
+                                    <!-- Edit and Delete Reply Buttons -->
+                                    {% if user == reply.author %}
+                                        <div class="flex gap-4 mt-2">
+                                            <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=reply.id) }}" method="POST">
+                                                <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm">Delete Reply</button>
+                                            </form>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No replies yet.</p>
                         {% endif %}
                     </div>
                 {% endfor %}
             </div>
-            
         </div>
     </div>
 </body>
