@@ -63,6 +63,9 @@ class Database:
 
     def get_all_blog_posts(self):
         return self.session.query(BlogPost).all()
+    
+    def get_post(self, post_id):
+        return self.session.query(BlogPost).filter(BlogPost.id==post_id).one_or_none()
 
     def add_comment(self, post_id, content, author):
         comment = Comment(content=content, author=author, post_id=post_id)

@@ -1,17 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ds-archive.us</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/98.css/2.5.1/98.min.css">
+    <style>
+        body {
+            background-color: #c7d8ed; /* Light blue background */
+            font-family: 'MS Sans Serif', Geneva, sans-serif; /* Windows 98 default font */
+            color: #000; /* Black text color */
+            padding: 20px;
+            margin: 0;
+            background-image: url('https://example.com/old-wallpaper.jpg'); /* Replace with your own vintage wallpaper */
+            background-repeat: repeat; /* Ensure the background repeats */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+        }
+        .Window {
+            max-width: 400px;
+            background-color: #f0f0f0; /* Light grey window background */
+            border: 1px solid #000;
+            padding: 20px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+        }
+        .Title {
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #d69c3b; /* Orange action button */
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold; /* Enhance button prominence */
+        }
+        input[type="submit"]:hover {
+            background-color: #bf7e24; /* Darker orange on hover */
+        }
+    </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form action="{{ url_for('api.login') }}" method="POST">
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br>
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-        <input type="submit" value="Login">
-    </form>
+    <div class="Window">
+        <h2 class="Title">Login</h2>
+        <form action="{{ url_for('api.login') }}" method="POST">
+            <label>Email:</label><br>
+            <input type="email" name="email" required><br>
+            <label>Password:</label><br>
+            <input type="password" name="password" required><br><br>
+            <input type="submit" value="Login">
+        </form>
+    </div>
 </body>
 </html>
-

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .header {
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto px-4">
+        <header class="bg-white shadow-md mb-8 header">
+            <div class="flex items-center justify-between py-4 ml-4 mr-4">
+                <h1 class="text-xl font-bold text-blue-600">ds-archive.us</h1>
+                <ul class="flex gap-4">
+                    {% if user %}
+                        <li class="text-gray-600">Welcome, {{ user.split('@')[0] }}</li>
+                        <li>
+                            <form action="{{ url_for('api.logout') }}" method="POST">
+                                <button type="submit" class="text-blue-600 hover:underline">Logout</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li><a href="{{ url_for('api.login') }}" class="text-blue-600 hover:underline">Login</a></li>
+                        <li><a href="{{ url_for('api.register') }}" class="text-blue-600 hover:underline">Register</a></li>
+                    {% endif %}
+                    <li class="ml-auto">
+                        {% if user %}
+                            <a href="{{ url_for('api.create_blog_post') }}" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">New Post</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </header>
+        
+        <div class="bg-white p-8 rounded-lg shadow-md mb-8">
+            <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
+            <p class="text-sm text-gray-500 mb-4">by {{ post.author }} on {{ post.created_at.strftime('%B %d, %Y') }}</p>
+            <div class="text-lg mb-8">
+                {{ post.content }}
+            </div>
+            
+            
+            <!-- Add Comment Form -->
+            {% if user %}
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <h2 class="text-2xl font-bold mb-4">Add a Comment</h2>
+                    <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
+                        <div class="mb-4">
+                            <label for="content" class="block text-gray-700">Comment</label>
+                            <textarea id="content" name="content" rows="4" class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <p class="text-gray-600">You must <a href="{{ url_for('api.login') }}" class="text-blue-600 hover:underline">login</a> to add a comment.</p>
+            {% endif %}
+            <!-- Comments Section -->
+            <div class="mt-10">
+                <h2 class="text-2xl font-bold mb-4">Comments</h2>
+                {% for comment in post.comments %}
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <p class="text-gray-700">{{ comment.content }}</p>
+                        <div class="text-gray-500 text-sm mt-2">by {{ comment.author }} on {{ comment.created_at.strftime('%B %d, %Y') }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

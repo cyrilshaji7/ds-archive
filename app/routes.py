@@ -6,7 +6,6 @@ from app.db import Database
 
 api = Blueprint('api', __name__, url_prefix='/api')  # Specify url_prefix='/api' for the Blueprint
 db = Database()
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Endpoint to render index.html
@@ -81,6 +80,13 @@ def create_blog_post():
 
     return render_template("index.html")
 
+@api.route("/posts/<int:post_id>", methods=['GET'])
+def get_post(post_id):
+    if request.method=='GET':
+        current_user = session.get('user_email')
+        post = db.get_post(post_id)
+        return render_template('post.html', post=post, user=current_user)
+
 # Endpoint to handle retrieving comments for a blog post
 @api.route("/posts/<int:post_id>/comments", methods=["GET"])
 def get_comments(post_id):
@@ -96,7 +102,7 @@ def add_comment(post_id):
     data = request.form
     content = data.get("content")
     db.add_comment(post_id=post_id, content=content, author=current_user)
-    return jsonify({"message": "Comment added successfully"}), 201
+    return redirect(url_for('api.get_post', post_id=post_id))
 
 # Test endpoint to check current session user
 @api.route('/test', methods=['GET', 'POST'])
