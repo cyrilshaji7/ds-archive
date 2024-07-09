@@ -3,76 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Blog Post - ds-archive.us</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/98.css/2.5.1/98.min.css">
+    <title>Create New Post</title>
+    
     <style>
         body {
-            background-color: #c7d8ed; /* Light blue background */
-            font-family: 'MS Sans Serif', Geneva, sans-serif; /* Windows 98 default font */
-            color: #000; /* Black text color */
-            padding: 20px;
-            margin: 0;
-            background-image: url('https://example.com/old-wallpaper.jpg'); /* Replace with your own vintage wallpaper */
-            background-repeat: repeat; /* Ensure the background repeats */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-        }
-        .Window {
+            font-family: "helvetica neue", Helvetica, Arial, sans-serif;
             max-width: 800px;
-            background-color: #f0f0f0; /* Light grey window background */
-            border: 1px solid #000;
+            margin: 0 auto;
             padding: 20px;
-            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
         }
-        .Title {
-            font-size: 24px;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: center;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        label {
-            font-weight: bold;
+        .flag {
+            width: 30px;
+            height: 20px;
+            background-color: #012169;
+            margin-right: 10px;
         }
-        input[type="text"],
-        textarea,
-        input[type="submit"] {
+        input[type="text"], textarea {
             width: 100%;
-            padding: 8px;
+            padding: 5px;
             margin-bottom: 10px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
         }
-        input[type="submit"] {
-            background-color: #d69c3b; /* Orange action button */
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-weight: bold; /* Enhance button prominence */
+        textarea {
+            height: 200px;
         }
-        input[type="submit"]:hover {
-            background-color: #bf7e24; /* Darker orange on hover */
+        .toolbar {
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .toolbar button {
+            margin-right: 5px;
+        }
+        .file-input {
+            margin-bottom: 10px;
+        }
+        .checkbox-group {
+            margin-bottom: 10px;
+        }
+        .tags input[type="text"] {
+            width: 22%;
+            margin-right: 2%;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+        .buttons button {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="Window">
-        <h1 class="Title">Create Blog Post</h1>
-        <form method="POST">
-            <div class="mb-4">
-                <label for="title" class="block">Title:</label>
-                <input type="text" id="title" name="title" required>
-            </div>
-            <div class="mb-6">
-                <label for="content" class="block">Content:</label>
-                <textarea id="content" name="content" rows="6" required></textarea>
-            </div>
-            <div class="flex items-center justify-center">
-                <button type="submit" class="Action">Publish</button>
-            </div>
-        </form>
+    <header style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; padding: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center;">
+            <h1 style="font-size: 1.75rem; font-weight: bold;  margin-right: 2 rem;">ds-archive.us</h1>
+            {% if not user %}
+                <ul style="display: flex; gap: 1rem; list-style-type: none; padding: 0;">
+                    <li><a href="{{ url_for('api.login') }}" style="color: #2563EB; text-decoration: none;">Login</a></li>
+                    <li><a href="{{ url_for('api.register') }}" style="color: #2563EB; text-decoration: none;">Register</a></li>
+                </ul>
+            {% endif %}
+        </div>
+        {% if user %}
+            <ul style="display: flex; gap: 1rem; list-style-type: none; padding: 0; margin-left: auto;">
+                <li style="color: #4B5563;">Welcome, {{ user.split('@')[0] }}</li>
+                <li><a href="{{ url_for('api.logout') }}" style="color: #2563EB; text-decoration: none;">Logout</a></li>
+            </ul>
+        {% endif %}
     </div>
+</header>
+    <div class="header">
+        <h3>New Post</h2>
+    </div>
+   
+    <p>The topic is now being edited by:  {{ user.split('@')[0] }}</p>
+    <form action="{{ url_for('api.create_blog_post') }}" method="POST">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title">
+
+        <label for="content">Content:</label>
+        <div class="toolbar">
+            <button type="button">B</button>
+            <button type="button">I</button>
+            <button type="button">U</button>
+            <!-- Add more toolbar buttons as needed -->
+        </div>
+        <textarea id="content" name="content"></textarea>
+
+        <div class="file-input">
+            <label for="images">Add images:</label>
+            <input type="file" id="images" name="images" multiple>
+        </div>
+
+        <label for="comment">Comment:</label>
+        <input type="text" id="comment" name="comment" placeholder="Optional short description of your changes">
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="view-history" name="view-history" checked>
+            <label for="view-history">Show revision history to all users who can read the post</label>
+        </div>
+
+        <a href="#">Add coauthors</a>
+
+        <div class="tags">
+            <label>Tags:</label>
+            <input type="text" name="tag1">
+            <input type="text" name="tag2">
+            <input type="text" name="tag3">
+            <input type="text" name="tag4">
+        </div>
+
+        <div class="buttons">
+            <button type="submit">Post</button>
+            <button type="button">Save draft</button>
+            <button type="button">Preview</button>
+            <button type="button">Delete</button>
+        </div>
+    </form>
 </body>
 </html>
