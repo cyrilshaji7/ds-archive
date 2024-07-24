@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, session, abort, flash
 from passlib.context import CryptContext
+import markdown
 from app.db import Database
 
 api = Blueprint('api', __name__)  # Specify url_prefix='/api' for the Blueprint
@@ -83,7 +84,12 @@ def get_post(post_id):
     if request.method=='GET':
         current_user = session.get('user_email')
         post = db.get_post(post_id)
-        return render_template('post.html', post=post, user=current_user)
+        if post:
+            post_content_html = markdown.markdown(post.content)
+            print(post_content_html)
+            return render_template('post.html', post=post, user=current_user, post_content_html=post_content_html)
+        else:
+            return render_template('error.html')
 
 # Endpoint to handle retrieving comments for a blog post
 @api.route("/posts/<int:post_id>/comments", methods=["GET"])
