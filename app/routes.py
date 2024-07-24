@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, render_template, redirect, url_fo
 from passlib.context import CryptContext
 from app.db import Database
 
-api = Blueprint('api', __name__, url_prefix='/api')  # Specify url_prefix='/api' for the Blueprint
+api = Blueprint('api', __name__)  # Specify url_prefix='/api' for the Blueprint
 db = Database()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

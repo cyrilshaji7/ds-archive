@@ -3,30 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create New Post</title>
-    
+    <title>Create New Post - ds-archive.us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Trebuchet+MS&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: "helvetica neue", Helvetica, Arial, sans-serif;
+            font-family: 'Trebuchet MS', Arial, sans-serif;
+            background: #e6e6e6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==') repeat;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
             max-width: 800px;
             margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             padding: 20px;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        header {
+            background: linear-gradient(to bottom, #4b6cb7 0%, #182848 100%);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .flag {
-            width: 30px;
-            height: 20px;
-            background-color: #012169;
-            margin-right: 10px;
+        h1, h3 {
+            margin: 0;
+            text-shadow: 2px 2px #000000;
+        }
+        nav {
+            background-color: #f0f0f0;
+            border-top: 1px solid #cccccc;
+            border-bottom: 1px solid #cccccc;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #0066cc;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
         }
         input[type="text"], textarea {
             width: 100%;
             padding: 5px;
             margin-bottom: 10px;
+            border: 1px solid #cccccc;
         }
         textarea {
             height: 200px;
@@ -35,14 +67,15 @@
             background-color: #f0f0f0;
             padding: 5px;
             margin-bottom: 5px;
+            border: 1px solid #cccccc;
         }
         .toolbar button {
             margin-right: 5px;
+            background-color: #e0e0e0;
+            border: 1px solid #999999;
+            padding: 2px 5px;
         }
-        .file-input {
-            margin-bottom: 10px;
-        }
-        .checkbox-group {
+        .file-input, .checkbox-group {
             margin-bottom: 10px;
         }
         .tags input[type="text"] {
@@ -54,76 +87,81 @@
         }
         .buttons button {
             margin-right: 10px;
+            background-color: #4b6cb7;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: #182848;
         }
     </style>
 </head>
 <body>
-    <header style="background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); margin-bottom: 2rem; padding: 1rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; align-items: center;">
-            <h1 style="font-size: 1.75rem; font-weight: bold;  margin-right: 2 rem;">ds-archive.us</h1>
-            {% if not user %}
-                <ul style="display: flex; gap: 1rem; list-style-type: none; padding: 0;">
-                    <li><a href="{{ url_for('api.login') }}" style="color: #2563EB; text-decoration: none;">Login</a></li>
-                    <li><a href="{{ url_for('api.register') }}" style="color: #2563EB; text-decoration: none;">Register</a></li>
-                </ul>
+    <div class="container">
+        <header>
+            <h1>ds-archive.us</h1>
+        </header>
+        
+        <nav>
+            <a href="#">Home</a> |
+            <a href="#">About</a> |
+            <a href="#">Contact</a> |
+            {% if user %}
+                <span>Welcome, {{ user.split('@')[0] }}</span> |
+                <a href="{{ url_for('api.logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('api.login') }}">Login</a> |
+                <a href="{{ url_for('api.register') }}">Register</a>
             {% endif %}
-        </div>
-        {% if user %}
-            <ul style="display: flex; gap: 1rem; list-style-type: none; padding: 0; margin-left: auto;">
-                <li style="color: #4B5563;">Welcome, {{ user.split('@')[0] }}</li>
-                <li><a href="{{ url_for('api.logout') }}" style="color: #2563EB; text-decoration: none;">Logout</a></li>
-            </ul>
-        {% endif %}
+        </nav>
+
+        <h3>New Post</h3>
+        <p>The topic is now being edited by: {{ user.split('@')[0] }}</p>
+
+        <form action="{{ url_for('api.create_blog_post') }}" method="POST">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title">
+
+            <label for="content">Content:</label>
+            <div class="toolbar">
+                <button type="button">B</button>
+                <button type="button">I</button>
+                <button type="button">U</button>
+            </div>
+            <textarea id="content" name="content"></textarea>
+
+            <div class="file-input">
+                <label for="images">Add images:</label>
+                <input type="file" id="images" name="images" multiple>
+            </div>
+
+            <label for="comment">Comment:</label>
+            <input type="text" id="comment" name="comment" placeholder="Optional short description of your changes">
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="view-history" name="view-history" checked>
+                <label for="view-history">Show revision history to all users who can read the post</label>
+            </div>
+
+            <a href="#">Add coauthors</a>
+
+            <div class="tags">
+                <label>Tags:</label>
+                <input type="text" name="tag1">
+                <input type="text" name="tag2">
+                <input type="text" name="tag3">
+                <input type="text" name="tag4">
+            </div>
+
+            <div class="buttons">
+                <button type="submit">Post</button>
+                <button type="button">Save draft</button>
+                <button type="button">Preview</button>
+                <button type="button">Delete</button>
+            </div>
+        </form>
     </div>
-</header>
-    <div class="header">
-        <h3>New Post</h2>
-    </div>
-   
-    <p>The topic is now being edited by:  {{ user.split('@')[0] }}</p>
-    <form action="{{ url_for('api.create_blog_post') }}" method="POST">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title">
-
-        <label for="content">Content:</label>
-        <div class="toolbar">
-            <button type="button">B</button>
-            <button type="button">I</button>
-            <button type="button">U</button>
-            <!-- Add more toolbar buttons as needed -->
-        </div>
-        <textarea id="content" name="content"></textarea>
-
-        <div class="file-input">
-            <label for="images">Add images:</label>
-            <input type="file" id="images" name="images" multiple>
-        </div>
-
-        <label for="comment">Comment:</label>
-        <input type="text" id="comment" name="comment" placeholder="Optional short description of your changes">
-
-        <div class="checkbox-group">
-            <input type="checkbox" id="view-history" name="view-history" checked>
-            <label for="view-history">Show revision history to all users who can read the post</label>
-        </div>
-
-        <a href="#">Add coauthors</a>
-
-        <div class="tags">
-            <label>Tags:</label>
-            <input type="text" name="tag1">
-            <input type="text" name="tag2">
-            <input type="text" name="tag3">
-            <input type="text" name="tag4">
-        </div>
-
-        <div class="buttons">
-            <button type="submit">Post</button>
-            <button type="button">Save draft</button>
-            <button type="button">Preview</button>
-            <button type="button">Delete</button>
-        </div>
-    </form>
 </body>
 </html>

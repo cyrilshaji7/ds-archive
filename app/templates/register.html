@@ -1,16 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - ds-archive.us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Trebuchet+MS&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Trebuchet MS', Arial, sans-serif;
+            background: #e6e6e6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==') repeat;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .window {
+            width: 400px;
+            background-color: #ffffff;
+            border: 2px solid #4b6cb7;
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        .title-bar {
+            background: linear-gradient(to bottom, #4b6cb7 0%, #182848 100%);
+            color: #ffffff;
+            padding: 5px 10px;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+        }
+        h2 {
+            color: #003366;
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #003366;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            border: 1px solid #cccccc;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 15px;
+            background-color: #4b6cb7;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="submit"]:hover {
+            background-color: #182848;
+        }
+    </style>
 </head>
 <body>
-    <h2>Register</h2>
-    <form action="{{ url_for('api.register') }}" method="POST">
-        <label>Email:</label><br>
-        <input type="email" name="email" required><br>
-        <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
-        <input type="submit" value="Register">
-    </form>
+    <div class="window">
+        <div class="title-bar">Register - ds-archive.us</div>
+        <div class="content">
+            <h2>Create Account</h2>
+            <form action="{{ url_for('api.register') }}" method="POST">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <input type="submit" value="Register">
+            </form>
+        </div>
+    </div>
 </body>
 </html>
