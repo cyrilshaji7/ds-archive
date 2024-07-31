@@ -54,7 +54,7 @@
             margin-top: 10px;
             font-weight: bold;
         }
-        input[type="text"], textarea {
+        input[type="text"], textarea, select {
             width: 100%;
             padding: 5px;
             margin-bottom: 10px;
@@ -125,43 +125,43 @@
             <input type="text" id="title" name="title">
 
             <label for="content">Content:</label>
-            <div class="toolbar">
-                <button type="button">B</button>
-                <button type="button">I</button>
-                <button type="button">U</button>
-            </div>
             <textarea id="content" name="content"></textarea>
 
-            <div class="file-input">
-                <label for="images">Add images:</label>
-                <input type="file" id="images" name="images" multiple>
-            </div>
+            <label for="featured_image">Featured Image URL:</label>
+            <input type="text" id="featured_image" name="featured_image" placeholder="Enter image URL">
 
-            <label for="comment">Comment:</label>
-            <input type="text" id="comment" name="comment" placeholder="Optional short description of your changes">
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="view-history" name="view-history" checked>
-                <label for="view-history">Show revision history to all users who can read the post</label>
-            </div>
-
-            <a href="#">Add coauthors</a>
+            <label for="category">Category:</label>
+            <select id="category" name="category">
+                <option value="technology">Technology</option>
+                <option value="science">Science</option>
+                <option value="health">Health</option>
+                <option value="education">Education</option>
+                <option value="entertainment">Entertainment</option>
+            </select>
 
             <div class="tags">
                 <label>Tags:</label>
-                <input type="text" name="tag1">
-                <input type="text" name="tag2">
-                <input type="text" name="tag3">
-                <input type="text" name="tag4">
+                <div id="tag-container">
+                    <input type="text" name="tags[]">
+                </div>
+                <button type="button" id="add-tag-button">Add Tag</button>
             </div>
 
             <div class="buttons">
                 <button type="submit">Post</button>
-                <button type="button">Save draft</button>
-                <button type="button">Preview</button>
                 <button type="button">Delete</button>
             </div>
         </form>
     </div>
+
+    <script>
+        document.getElementById('add-tag-button').addEventListener('click', function() {
+            var tagContainer = document.getElementById('tag-container');
+            var newTagInput = document.createElement('input');
+            newTagInput.type = 'text';
+            newTagInput.name = 'tags[]';
+            tagContainer.appendChild(newTagInput);
+        });
+    </script>
 </body>
 </html>

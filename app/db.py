@@ -1,8 +1,9 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from passlib.context import CryptContext
+from sqlalchemy import Table, MetaData
 
 # Replace with your actual database URI
 SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
@@ -21,12 +22,15 @@ class BlogPost(Base):
     __tablename__ = 'blog_posts'
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
-    content = Column(String(1000), nullable=False)
+    content = Column(Text, nullable=False)  # Changed to Text for larger content
     author = Column(String(50), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    featured_image = Column(String(255))  # For image URLs
+    category = Column(String(50))
     
     # Relationship with comments
     comments = relationship('Comment', back_populates='post')
+    tags = relationship('Tag', secondary='post_tags', back_populates='posts')
 
 class Comment(Base):
     __tablename__ = 'comments'
@@ -47,6 +51,18 @@ class Comment(Base):
     # Define relationship with BlogPost
     post = relationship('BlogPost', back_populates='comments')
 
+# Association Table for many-to-many relationship between BlogPost and Tag
+post_tags = Table('post_tags', Base.metadata,
+    Column('post_id', Integer, ForeignKey('blog_posts.id')),
+    Column('tag_id', Integer, ForeignKey('tags.id'))
+)
+
+class Tag(Base):
+    __tablename__ = 'tags'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), unique=True, nullable=False)
+    posts = relationship('BlogPost', secondary=post_tags, back_populates='tags')
+
 
 # Define Database class for interactions
 class Database:
@@ -65,8 +81,15 @@ class Database:
     def get_user(self, email):
         return self.session.query(User).filter_by(email=email).first()
 
-    def add_blog_post(self, title, content, author):
-        blog_post = BlogPost(title=title, content=content, author=author)
+    def add_blog_post(self, title, content, author, featured_image=None, category=None, tags=[]):
+        blog_post = BlogPost(title=title, content=content, author=author, featured_image=featured_image, category=category)
+        # Add tags to the post
+        for tag_name in tags:
+            tag = self.session.query(Tag).filter_by(name=tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                self.session.add(tag)
+            blog_post.tags.append(tag)
         self.session.add(blog_post)
         self.session.commit()
 
@@ -76,11 +99,13 @@ class Database:
     def get_post(self, post_id):
         return self.session.query(BlogPost).filter_by(id=post_id).one_or_none()
 
-    def update_blog_post(self, post_id, title, content):
+    def update_blog_post(self, post_id, title, content, featured_image=None, category=None):
         post = self.get_post(post_id)
         if post:
             post.title = title
             post.content = content
+            post.featured_image = featured_image
+            post.category = category
             self.session.commit()
             return post
         return None
@@ -108,13 +133,10 @@ class Database:
         return self.session.query(Comment).filter_by(id=comment_id, post_id=post_id).one_or_none()
 
     def delete_comment(self, comment):
-    # Ensure comment is an instance of Comment or fetch it by ID if necessary
         if not isinstance(comment, Comment):
             comment = self.session.query(Comment).filter_by(id=comment).first()
-
         if comment:
             self.session.delete(comment)
             self.session.commit()
             return True
         return False
-

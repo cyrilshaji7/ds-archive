@@ -74,10 +74,14 @@ def create_blog_post():
         data = request.form
         title = data.get("title")
         content = data.get("content")
-        db.add_blog_post(title=title, content=content, author=current_user)
+        featured_image = data.get("featured_image")
+        category = data.get("category")
+        tags = data.getlist("tags[]")
+        db.add_blog_post(title=title, content=content, author=current_user, featured_image=featured_image, category=category, tags=tags)
         return redirect(url_for('api.index'))
 
     return render_template("index.html")
+
 
 @api.route("/posts/<int:post_id>", methods=['GET'])
 def get_post(post_id):
