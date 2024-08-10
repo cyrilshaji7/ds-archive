@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Text
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -5,8 +6,8 @@ from datetime import datetime
 from passlib.context import CryptContext
 from sqlalchemy import Table, MetaData
 
-# Replace with your actual database URI
-SQLALCHEMY_DATABASE_URI = 'sqlite:///database.db'
+# Read the database URI from environment variable
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://localhost:5432/defaultdb')
 
 Base = declarative_base()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")  # Using bcrypt for hashing
