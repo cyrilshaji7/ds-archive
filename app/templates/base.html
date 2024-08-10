@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ds-archive.us</title>
+    <title>{% block title %}ds-archive.us{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Trebuchet+MS&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    
 </head>
 <body>
     <div class="container">
@@ -26,16 +25,7 @@
         </nav>
 
         <main>
-            {% for post in posts %}
-                <article class="post">
-                    <h2>{{ post.title }}</h2>
-                    <div class="post-meta">Posted by {{ post.author }} on {{ post.created_at }}</div>
-                    <div class="post-content">
-                        {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
-                    </div>
-                    <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="read-more">Read more</a>
-                </article>
-            {% endfor %}
+            {% block content %}{% endblock %}
         </main>
 
         <footer>

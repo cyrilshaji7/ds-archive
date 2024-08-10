@@ -13,7 +13,7 @@ def index():
     current_user = session.get('user_email')
     access_token = session.get('access_token')
     posts = db.get_all_blog_posts()
-    return render_template("index.html", posts=posts, user=current_user, access_token=access_token)
+    return render_template("index.html", posts=posts, user=current_user, access_token=access_token )
 
 # Endpoint to render login.html
 @api.route("/login", methods=["GET", "POST"])
