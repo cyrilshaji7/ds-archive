@@ -18,8 +18,7 @@ attrs==23.2.0
 Babel==2.15.0
 beautifulsoup4==4.12.3
 beniget==0.4.1
-binwalk==2.3.3
-biopython==1.83
+binwalk
 bitsandbytes==0.43.1
 bleach==6.1.0
 blinker==1.8.2
