@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from sqlalchemy import Table, MetaData
 
 # Read the database URI from environment variable
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://localhost:5432/defaultdb')
+SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres.zhnmfgbftsjpnaglkpxu:Z5Xu6x_VsB4tdy!@aws-0-ca-central-1.pooler.supabase.com:6543/postgres')
 
 Base = declarative_base()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")  # Using bcrypt for hashing

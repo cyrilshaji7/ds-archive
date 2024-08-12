@@ -3,202 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ post.title }} - ds-archive.us</title>
-    <link href="https://fonts.googleapis.com/css2?family=Trebuchet+MS&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../static/styles.css">
-    <style>
-        body {
-            font-family: 'Trebuchet MS', Arial, sans-serif;
-            background: #e6e6e6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQIW2NkQAKrVq36zwjjgzhhYWGMYAEYB8RmROaABADeOQ8CXl/xfgAAAABJRU5ErkJggg==') repeat;
-            margin: 0;
-            padding: 0;
-
-        }
-        .background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('{{ post.featured_image }}');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            z-index: -1; /* Ensure it stays behind other content */
-        }
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border: 1px solid #cccccc;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            padding: 20px;
-        }
-        header {
-    background: #f9f3e9;
-    color: #6c4f4f;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #d0b89e;
-    font-family: 'Georgia', serif;
-}
-
-        h1, h2, h3 {
-            color: #003366;
-        }
-        nav {
-            background-color: #f0f0f0;
-            border-top: 1px solid #cccccc;
-            border-bottom: 1px solid #cccccc;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        nav a {
-            color: #0066cc;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .post-content {
-            border: 1px solid #cccccc;
-            padding: 15px;
-            margin-bottom: 20px;
-            background-color: #ffffff;
-        }
-        .comment, .reply {
-            border: 1px solid #cccccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-        }
-        .reply {
-            margin-left: 20px;
-            background-color: #f0f0f0;
-        }
-        .button {
-            background-color: #4b6cb7;
-            color: #ffffff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .button:hover {
-            background-color: #182848;
-        }
-        textarea {
-            width: 100%;
-            padding: 5px;
-            border: 1px solid #cccccc;
-        }
-
-        img {
-            width: 20%;
-            height: 20%;
-            
-        }
-    </style>
-    <!-- Add MathJax script -->
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <title>ds-archive.us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="background"></div>
-    <div class="container">
-        <header>
-            <h1>ds-archive.us</h1>
-        </header>
-        
-        <nav>
-            <a href="#">Home</a> |
-            <a href="#">About</a> |
-            <a href="#">Contact</a> |
-            {% if user %}
-                <span>Welcome, {{ user.split('@')[0] }}</span> |
-                <a href="{{ url_for('api.logout') }}">Logout</a> |
-                <a href="{{ url_for('api.create_blog_post') }}">New Post</a>
-            {% else %}
-                <a href="{{ url_for('api.login') }}">Login</a> |
-                <a href="{{ url_for('api.register') }}">Register</a>
-            {% endif %}
-        </nav>
-
-        <div class="post-content">
-            <h1>{{ post.title }}</h1>
-            <p><small>by {{ post.author }} on {{ post.created_at.strftime('%B %d, %Y') }}</small></p>
-            
-            <!-- Render the converted HTML content with LaTeX -->
-            <div>
-                {{ post_content_html | safe }}
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>ds-archive.us</h1>
+                <span class="subtitle"></span>
             </div>
-
-            {% if user == post.author %}
-                <div style="margin-top: 10px;">
-                    <a href="{{ url_for('api.edit_post', post_id=post.id) }}" class="button">Edit</a>
-                    <form action="{{ url_for('api.delete_post', post_id=post.id) }}" method="POST" style="display: inline;">
-                        <button type="submit" class="button" style="background-color: #cc0000;">Delete</button>
-                    </form>
+            <div class="user-actions">
+                <div class="language-selector">
+                    <a href="#" class="lang">🇺🇸</a>
+                    <a href="#" class="lang">🇷🇺</a>
                 </div>
-            {% endif %}
-        </div>
-        
-        <h3>Comments</h3>
-        {% if user %}
-            <div style="margin-bottom: 20px;">
-                <h4>Add a Comment</h4>
-                <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
-                    <textarea name="content" rows="4" required></textarea>
-                    <button type="submit" class="button">Submit</button>
-                </form>
-            </div>
-        {% else %}
-            <p>You must <a href="{{ url_for('api.login') }}">login</a> to add a comment.</p>
-        {% endif %}
-        
-        {% for comment in post.comments if not comment.parent_comment_id %}
-            <div class="comment">
-                <p>{{ comment.content }}</p>
-                <p><small>by {{ comment.author.split('@')[0] }} on {{ comment.created_at.strftime('%B %d, %Y') }}</small></p>
-                
-                {% if user == comment.author %}
-                    <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="POST" style="display: inline;">
-                        <button type="submit" class="button" style="background-color: #cc0000;">Delete Comment</button>
-                    </form>
-                {% endif %}
-                
                 {% if user %}
-                    <div style="margin-top: 10px;">
-                        <h4>Reply to {{ comment.author.split('@')[0] }}</h4>
-                        <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
-                            <textarea name="content" rows="3" required></textarea>
-                            <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
-                            <button type="submit" class="button">Submit Reply</button>
-                        </form>
-                    </div>
-                {% endif %}
-                
-                {% if comment.replies %}
-                    {% for reply in comment.replies %}
-                        <div class="reply">
-                            <p>{{ reply.content }}</p>
-                            <p><small>by {{ reply.author.split('@')[0] }} on {{ reply.created_at.strftime('%B %d, %Y') }}</small></p>
-                            
-                            {% if user == reply.author %}
-                                <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=reply.id) }}" method="POST" style="display: inline;">
-                                    <button type="submit" class="button" style="background-color: #cc0000;">Delete Reply</button>
-                                </form>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
+                    <span class="welcome-msg">{{ user.split('@')[0] }}</span>
+                    <a href="{{ url_for('api.logout') }}" class="user-link">Logout</a>
                 {% else %}
-                    <p><small>No replies yet.</small></p>
+                    <a href="{{ url_for('api.login') }}" class="user-link">Login</a>
+                    <a href="{{ url_for('api.register') }}" class="user-link">Register</a>
                 {% endif %}
             </div>
-        {% endfor %}
+        </div>
+        <nav>
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Top</a>
+            <a href="#" class="nav-link">Marathons</a>
+            <a href="#" class="nav-link">Resources</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main>
+            <h2>Featured Articles</h2>
+            <div class="search-box">
+                <input type="text" placeholder="Blog name, description">
+                <button>Search</button>
+            </div>
+         
+            <div class="blog-list">
+                {% for post in posts %}
+                    <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="blog-item">
+                        <div class="blog-info">
+                            <h4>{{ post.title }}</h4>
+                            <p>{{ post.author }} • {{ post.created_at }}</p>
+                            <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+           
+            <div class="sidebar">
+                <h3>Browse Articles by tag</h3>
+                <div class="tag-list">
+                    <a href="#">technology</a>
+                    <a href="#">lifestyle</a>
+                    <a href="#">travel</a>
+                    <a href="#">food</a>
+                    <a href="#">fashion</a>
+                    <!-- Add more tags as needed -->
+                </div>
+            </div>
+        </main>
     </div>
+    <footer>
+        <div class="footer-content">
+            &copy; 2024 ds-archive.us. All rights reserved.
+        </div>
+    </footer>
 </body>
 </html>

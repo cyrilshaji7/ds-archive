@@ -4,43 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ds-archive.us</title>
-    <link href="https://fonts.googleapis.com/css2?family=Trebuchet+MS&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    
 </head>
 <body>
-    <div class="container">
-        <header>
+    <header>
+    <div class="header-content" style="margin-right: 18%;">
+        <div class="logo">
             <h1>ds-archive.us</h1>
-        </header>
-        
-        <nav>
+            <span class="subtitle">learning assistance platform</span>
+        </div>
+        <div class="user-actions">
+            
             {% if user %}
-                <span>Welcome, {{ user.split('@')[0] }}</span> |
-                <a href="{{ url_for('api.logout') }}">Logout</a> |
-                <a href="{{ url_for('api.create_blog_post') }}">New Post</a>
+               
             {% else %}
-                <a href="{{ url_for('api.login') }}">Login</a> |
-                <a href="{{ url_for('api.register') }}">Register</a>
+                <a href="{{ url_for('api.login') }}" class="user-link">Login</a>
+                <a href="{{ url_for('api.register') }}" class="user-link">Register</a>
             {% endif %}
-        </nav>
-
-        <main>
-            {% for post in posts %}
-                <article class="post">
-                    <h2>{{ post.title }}</h2>
-                    <div class="post-meta">Posted by {{ post.author }} on {{ post.created_at }}</div>
-                    <div class="post-content">
-                        {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
-                    </div>
-                    <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="read-more">Read more</a>
-                </article>
-            {% endfor %}
-        </main>
-
-        <footer>
-            &copy; 2024 ds-archive.us. All rights reserved.
-        </footer>
+        </div>
     </div>
+    <nav style="margin-right: 20%;">
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Marathons</a>
+        <a href="#" class="nav-link">Resources</a>
+        {% if user %}
+                
+                <span>{{ user.split('@')[0] }}</span>
+                    <a href="">|</a> 
+                    <a href="{{ url_for('api.logout') }}" class="button">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('api.login') }}" class="button">Login</a>
+                    <a href="{{ url_for('api.register') }}" class="button">Register</a>
+                {% endif %}
+    </nav>
+</header>
+
+    <div class="container" style="position: relative;">
+        
+        <main>
+            <h2>Featured Articles</h2>
+            {% if user %}
+    <a href="{{ url_for('api.create_blog_post') }}" style="position: absolute; top: 10px; right: 10px;">
+       New Post
+    </a>
+{% endif %}
+
+           
+            <div class="search-box">
+                <input type="text" placeholder="Blog name, description">
+                <button>Search</button>
+            </div>
+         
+            <div class="blog-list">
+                {% for post in posts %}
+                    <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="blog-item">
+                        <div class="blog-info">
+                            <h4>{{ post.title }}</h4>
+                            <p>{{post.author.split('@')[0]}} • {{ post.created_at }}</p>
+                            <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+           
+            <div class="sidebar">
+                <h3>Browse Articles by tag</h3>
+                <div class="tag-list">
+                    <a href="#">technology</a>
+                    <a href="#">lifestyle</a>
+                    <a href="#">travel</a>
+                    <a href="#">food</a>
+                    <a href="#">fashion</a>
+                    <!-- Add more tags as needed -->
+                </div>
+                
+                
+            </div>
+        </main>
+    </div>
+    <footer>
+        <div class="footer-content">
+            &copy; 2024 ds-archive.us. All rights reserved.
+        </div>
+    </footer>
 </body>
 </html>
