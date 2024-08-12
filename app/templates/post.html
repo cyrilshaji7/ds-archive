@@ -3,72 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ds-archive.us</title>
+    <title>{{ post.title }} - ds-archive.us</title>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Keep the existing styles here */
+        /* ... */
+
+        /* New styles for post content and comments */
+        .post-content {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            margin: 0 auto;
+            max-width: 1100px;
+            padding: 0 0px;
+        }
+        .post-content * {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        pre, code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        img {
+            max-width: 80%;
+            height: auto;
+        }
+        .comments-section {
+            margin-top: 30px;
+            border-top: 1px solid #cccccc;
+            padding-top: 20px;
+            background-color: #f9f9f9;
+        }
+        .comments-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .comment, .reply {
+            border: 1px solid #cccccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #ffffff;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .reply {
+            margin-left: 20px;
+            background-color: #f0f0f0;
+        }
+        .comment-form textarea {
+            width: 100%;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+        .comment-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .browse-by-topic {
+            background-color: #f0f0f0;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
     <header>
-        <div class="header-content">
+        <div class="header-content" style="margin-right: 32%;">
             <div class="logo">
                 <h1>ds-archive.us</h1>
-                <span class="subtitle"></span>
-            </div>
-            <div class="user-actions">
-                <div class="language-selector">
-                    <a href="#" class="lang">🇺🇸</a>
-                    <a href="#" class="lang">🇷🇺</a>
-                </div>
-                {% if user %}
-                    <span class="welcome-msg">{{ user.split('@')[0] }}</span>
-                    <a href="{{ url_for('api.logout') }}" class="user-link">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('api.login') }}" class="user-link">Login</a>
-                    <a href="{{ url_for('api.register') }}" class="user-link">Register</a>
-                {% endif %}
+                <span class="subtitle">learning assistance platform</span>
             </div>
         </div>
-        <nav>
+        <nav style="margin-right: 20%;">
             <a href="#" class="nav-link">Home</a>
-            <a href="#" class="nav-link">Top</a>
             <a href="#" class="nav-link">Marathons</a>
             <a href="#" class="nav-link">Resources</a>
+            {% if user %}
+                <span>{{ user.split('@')[0] }}</span>
+                <a href="">|</a> 
+                <a href="{{ url_for('api.logout') }}" class="button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('api.login') }}" class="button">Login</a>
+                <a href="">|</a>
+                <a href="{{ url_for('api.register') }}" class="button">Register</a>
+            {% endif %}
         </nav>
     </header>
 
+    <div class="background"></div>
     <div class="container">
         <main>
-            <h2>Featured Articles</h2>
-            <div class="search-box">
-                <input type="text" placeholder="Blog name, description">
-                <button>Search</button>
-            </div>
-         
-            <div class="blog-list">
-                {% for post in posts %}
-                    <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="blog-item">
-                        <div class="blog-info">
-                            <h4>{{ post.title }}</h4>
-                            <p>{{ post.author }} • {{ post.created_at }}</p>
-                            <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
-                        </div>
-                    </a>
-                {% endfor %}
-            </div>
-           
-            <div class="sidebar">
-                <h3>Browse Articles by tag</h3>
-                <div class="tag-list">
-                    <a href="#">technology</a>
-                    <a href="#">lifestyle</a>
-                    <a href="#">travel</a>
-                    <a href="#">food</a>
-                    <a href="#">fashion</a>
-                    <!-- Add more tags as needed -->
+            <div class="post-content" style="margin-right: 20%;">
+                <h1>{{ post.title }}</h1>
+                <p><small>by {{ post.author }} on {{ post.created_at.strftime('%B %d, %Y') }}</small></p>
+
+                <div>
+                    {{ post_content_html | safe }}
                 </div>
+
+                {% if user == post.author %}
+                    <div style="margin-top: 20px;">
+                        <a href="{{ url_for('api.edit_post', post_id=post.id) }}" class="button">Edit</a>
+                        <form action="{{ url_for('api.delete_post', post_id=post.id) }}" method="POST" style="display: inline;">
+                            <button type="submit" class="button" style="background-color: #cc0000;">Delete</button>
+                        </form>
+                    </div>
+                {% endif %}
             </div>
         </main>
+        <div class="sidebar">
+            
+          
+            <h3>Browse By Topic</h3>
+            <div class="tag-list">
+                <a href="#">technology</a>
+                <a href="#">lifestyle</a>
+                <a href="#">travel</a>
+                <a href="#">food</a>
+                <a href="#">fashion</a>
+                <!-- Add more tags as needed -->
+            </div>
+        </div>
     </div>
+
+    <div class="comments-section">
+        <div class="comments-container">
+            <h3>Comments</h3>
+            {% if user %}
+                <div class="comment-form">
+                    <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
+                        <textarea name="content" placeholder="Add a comment..." required></textarea>
+                        <button type="submit" class="button">Submit Comment</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>You must <a href="{{ url_for('api.login') }}">login</a> to add a comment.</p>
+            {% endif %}
+            
+            {% for comment in post.comments if not comment.parent_comment_id %}
+                <div class="comment">
+                    <p>{{ comment.content }}</p>
+                    <div class="comment-actions">
+                        <small>by {{ comment.author.split('@')[0] }} on {{ comment.created_at.strftime('%B %d, %Y') }}</small>
+                        {% if user == comment.author %}
+                            <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=comment.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="button" style="background-color: #cc0000;">Delete</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user %}
+                        <div class="reply-form" style="margin-top: 10px;">
+                            <form action="{{ url_for('api.add_comment', post_id=post.id) }}" method="POST">
+                                <textarea name="content" rows="2" placeholder="Reply to {{ comment.author.split('@')[0] }}..." required></textarea>
+                                <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                                <button type="submit" class="button">Reply</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                    
+                    {% if comment.replies %}
+                        {% for reply in comment.replies %}
+                            <div class="reply">
+                                <p>{{ reply.content }}</p>
+                                <div class="comment-actions">
+                                    <small>by {{ reply.author.split('@')[0] }} on {{ reply.created_at.strftime('%B %d, %Y') }}</small>
+                                    {% if user == reply.author %}
+                                        <form action="{{ url_for('api.delete_comment', post_id=post.id, comment_id=reply.id) }}" method="POST" style="display: inline;">
+                                            <button type="submit" class="button" style="background-color: #cc0000;">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
     <footer>
         <div class="footer-content">
             &copy; 2024 ds-archive.us. All rights reserved.

@@ -9,79 +9,68 @@
 </head>
 <body>
     <header>
-    <div class="header-content" style="margin-right: 18%;">
-        <div class="logo">
-            <h1>ds-archive.us</h1>
-            <span class="subtitle">learning assistance platform</span>
+        <div class="header-content" style="margin-right: 32%;">
+            <div class="logo">
+                <h1>ds-archive.us</h1>
+                <span class="subtitle">learning assistance platform</span>
+            </div>
         </div>
-        <div class="user-actions">
-            
+        <nav style="margin-right: 20%;">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Marathons</a>
+            <a href="#" class="nav-link">Resources</a>
             {% if user %}
-               
-            {% else %}
-                <a href="{{ url_for('api.login') }}" class="user-link">Login</a>
-                <a href="{{ url_for('api.register') }}" class="user-link">Register</a>
-            {% endif %}
-        </div>
-    </div>
-    <nav style="margin-right: 20%;">
-        <a href="#" class="nav-link">Home</a>
-        <a href="#" class="nav-link">Marathons</a>
-        <a href="#" class="nav-link">Resources</a>
-        {% if user %}
-                
                 <span>{{ user.split('@')[0] }}</span>
-                    <a href="">|</a> 
-                    <a href="{{ url_for('api.logout') }}" class="button">Logout</a>
-                {% else %}
-                    <a href="{{ url_for('api.login') }}" class="button">Login</a>
-                    <a href="{{ url_for('api.register') }}" class="button">Register</a>
-                {% endif %}
-    </nav>
-</header>
-
-    <div class="container" style="position: relative;">
-        
+                <a href="">|</a> 
+                <a href="{{ url_for('api.logout') }}" class="button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('api.login') }}" class="button">Login</a>
+                <a href="">|</a>
+                <a href="{{ url_for('api.register') }}" class="button">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+    <div class="container">
         <main>
             <h2>Featured Articles</h2>
-            {% if user %}
-    <a href="{{ url_for('api.create_blog_post') }}" style="position: absolute; top: 10px; right: 10px;">
-       New Post
-    </a>
-{% endif %}
-
+           
            
             <div class="search-box">
                 <input type="text" placeholder="Blog name, description">
-                <button>Search</button>
+                <button class="search-btn">Search</button>
+                {% if user %}
+                <a href="{{ url_for('api.create_blog_post') }}" class="search-btn" style="margin-left: 10px;">
+                New Post
+                </a>
+                {% endif %}
             </div>
+
          
             <div class="blog-list">
                 {% for post in posts %}
                     <a href="{{ url_for('api.get_post', post_id=post.id) }}" class="blog-item">
                         <div class="blog-info">
                             <h4>{{ post.title }}</h4>
-                            <p>{{post.author.split('@')[0]}} • {{ post.created_at }}</p>
+                            <p>{{post.author.split('@')[0]}} • {{ post.created_at.strftime('%B %d, %Y') }}</p>
                             <p>{{ post.content[:100] }}{% if post.content|length > 100 %}...{% endif %}</p>
                         </div>
                     </a>
                 {% endfor %}
             </div>
-           
-            <div class="sidebar">
-                <h3>Browse Articles by tag</h3>
-                <div class="tag-list">
-                    <a href="#">technology</a>
-                    <a href="#">lifestyle</a>
-                    <a href="#">travel</a>
-                    <a href="#">food</a>
-                    <a href="#">fashion</a>
-                    <!-- Add more tags as needed -->
-                </div>
-                
-                
-            </div>
         </main>
+        
+        <div class="sidebar">
+            
+            <h3>Browse By Topic</h3>
+            <div class="tag-list">
+                <a href="#">technology</a>
+                <a href="#">lifestyle</a>
+                <a href="#">travel</a>
+                <a href="#">food</a>
+                <a href="#">fashion</a>
+                <!-- Add more tags as needed -->
+            </div>
+        </div>
     </div>
     <footer>
         <div class="footer-content">
